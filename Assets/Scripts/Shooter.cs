@@ -9,6 +9,7 @@ public class Shooter : MonoBehaviour
     public float shotForce;
     public float shotTorque;
     public float baseWidth;
+    public CandyManager candyManager;//candyManagerをinspectorから登録できる shooterからcandymanagerを使いたい
 
     
 
@@ -26,12 +27,19 @@ public class Shooter : MonoBehaviour
 
     Vector3 GetInstantiatePosition()
     {
-        float x = baseWidth * (Input.mousePosition.x/*クリックしたxの座標*/ / Screen.width) - (baseWidth / 2);//画面の〇%の場所にシューターを向ける
+        float x = baseWidth * (Input.mousePosition.x/*クリックしたxの座標*/ / Screen.width) - (baseWidth / 2);//ベースの横幅の〇%の場所にシューターを向ける
         return transform.position + new Vector3(x, 0, 0);
     }
 
     public void Shot()
     {
+        //Debug.Log(Hoge.num); staticフィールドだとクラス名.で誰でもアクセスできる scriptのassetsにあるだけで使える しかし、誰でも使える分弊害もある 個人開発だとアリ
+        //Hoge.num++;
+        if(candyManager.GetCandyAmount() <= 0)
+        {
+            return;
+        }
+
         GameObject candy = (GameObject)Instantiate(
             SampleCandy(),
             GetInstantiatePosition(),
@@ -44,5 +52,7 @@ public class Shooter : MonoBehaviour
         Rigidbody candyRigidBody = candy.GetComponent<Rigidbody>();
         candyRigidBody.AddForce(transform.forward * shotForce);//加える力
         candyRigidBody.AddTorque(new Vector3(0, shotTorque, 0));//回転力
+
+        candyManager.ConsumeCandy();
     }
 }
