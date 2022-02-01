@@ -48,14 +48,14 @@ public class CandyManager : MonoBehaviour
                 StartCoroutine(RecoverCandy());
             }
         }
-    IEnumerator RecoverCandy()//コルーチンはEnumerator
+    IEnumerator RecoverCandy()//コルーチンはIEnumerator updateメソッドと同時平行したい時に使う
     {
             counter = RecoverySeconds;
 
             while(counter > 0)
             {
-                yield return new WaitForSeconds(1.0f);//1秒間待ったらreturnで抜ける
-                counter--;
+                yield return new WaitForSeconds(1.0f);//1秒待ったら↓の処理(1秒待ったら1秒減らし、0になったらwhile文を抜ける)　
+            counter--;
             }
             candy++;
     }

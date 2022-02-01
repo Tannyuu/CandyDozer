@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
+    const int MaxShotPower = 5;
+    const int RecoverySeconds = 3;
+
+    int shotPower = MaxShotPower;
+
     public GameObject[] candyPrefabs;
     public Transform candyParentTransform;//親子関係を結んで動きを連動させたりする GameObject型だとcandy.transform.parent = candyParent.transformになる GetComponentが必要になる
     public float shotForce;
@@ -39,7 +44,10 @@ public class Shooter : MonoBehaviour
         {
             return;
         }
-
+        if(shotPower <= 0)
+        {
+            return;
+        }
         GameObject candy = (GameObject)Instantiate(
             SampleCandy(),
             GetInstantiatePosition(),
@@ -54,5 +62,28 @@ public class Shooter : MonoBehaviour
         candyRigidBody.AddTorque(new Vector3(0, shotTorque, 0));//回転力
 
         candyManager.ConsumeCandy();
+
+        ConsumePower();
+    }
+    void OnGUI()
+    {
+        GUI.color = Color.black;
+
+        string label = "";
+        for(int i = 0; i < shotPower; i++)
+        {
+            label = label + "+";
+        }
+        GUI.Label(new Rect(50, 65, 100, 30), label);
+    }
+    void ConsumePower()
+    {
+        shotPower--;
+        StartCoroutine(RecoverPower());
+    }
+    IEnumerator RecoverPower()
+    {
+        yield return new WaitForSeconds(RecoverySeconds);
+        shotPower++;
     }
 }
